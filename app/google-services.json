@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "281930247468",
+    "project_id": "smart-tooth-hang-tuah",
+    "storage_bucket": "smart-tooth-hang-tuah.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:281930247468:android:64bd9e78ffe8e5416dd089",
+        "android_client_info": {
+          "package_name": "com.fkg.smarttooth"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "281930247468-jmr94i3104qigod1a9f0n77jdkj7gg23.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWZZQEzC4bAdaoZdL_ZJv4JTRhDRUhSCY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "281930247468-jmr94i3104qigod1a9f0n77jdkj7gg23.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
