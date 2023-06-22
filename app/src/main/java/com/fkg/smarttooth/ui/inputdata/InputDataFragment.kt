@@ -3,6 +3,7 @@ package com.fkg.smarttooth.ui.inputdata
 import android.content.Context
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
+import android.support.annotation.DrawableRes
 import android.text.InputType
 import android.view.ContextThemeWrapper
 import android.view.Gravity
@@ -38,6 +39,7 @@ class InputDataFragment(
 
     override fun setup() {
         binding.btnEdit.setOnClickListener { setupEditMode() }
+        binding.imgDiscrepancy.setImageDrawable(getDrawable(R.drawable.arch_upper, R.drawable.arch_bottom))
         viewModel.getJawData(id, isTop()).observe(this, setJawDataObserver())
         if (!viewModel.verifyLogin()) binding.btnEdit.gone()
     }
@@ -69,7 +71,7 @@ class InputDataFragment(
         binding.tableData.removeAllViews()
 
         Jaw.TOOTH.values().forEach {
-            createDataTableRow(it.value, jawData?.toothData?.get(it).orZero())
+            createDataTableRow(it.display, jawData?.toothData?.get(it).orZero())
         }
         createDataTableRow("Panjang Lengkung rahang", jawData?.archLength.orZero())
         createDataTableRow("Panjang Rahang", jawData?.length.orZero())
@@ -82,15 +84,15 @@ class InputDataFragment(
         binding.tableInput.removeAllViews()
         Jaw.TOOTH.values().forEach { tooth ->
             createInputTableRow(
-                tooth.value,
-                resources.getDrawable(tooth.img),
+                tooth.display,
+                getDrawable(tooth.imgUpper, tooth.imgBottom),
                 jawData?.toothData?.get(tooth)
             ) { viewModel.put(tooth, it.safeParseDouble()) }
         }
 
         createInputTableRow(
             "Panjang Lengkung Rahang",
-            resources.getDrawable(R.drawable.arch),
+            getDrawable(R.drawable.arch_length_upper, R.drawable.arch_length_bottom),
             jawData?.archLength
         ) { tempData[ARCH_LENGTH] = it.safeParseDouble() }
 
@@ -158,6 +160,9 @@ class InputDataFragment(
         },
         onLoading = { binding.progressBar.visible() }
     )
+
+    private fun getDrawable(@DrawableRes upper: Int, @DrawableRes bottom: Int) =
+        if (isTop())  resources.getDrawable(upper) else  resources.getDrawable(bottom)
 
     private fun createDataTableRow(name: String, value: Double, isHeader: Boolean = false) {
         val tableRow = TableRow(requireContext())

@@ -2,8 +2,11 @@ package com.fkg.smarttooth.ui.main
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.afollestad.materialdialogs.MaterialDialog
 import com.fkg.smarttooth.R
 import com.fkg.smarttooth.base.BaseActivity
 import com.fkg.smarttooth.data.model.Diagnosis
@@ -12,6 +15,7 @@ import com.fkg.smarttooth.data.model.Jaw
 import com.fkg.smarttooth.data.model.Patient
 import com.fkg.smarttooth.databinding.ActivityDetailPatientBinding
 import com.fkg.smarttooth.ui.inputdata.InputDataActivity
+import com.fkg.smarttooth.utils.HELP_BODY_DETAIL
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -149,7 +153,7 @@ class DetailPatientActivity : BaseActivity<ActivityDetailPatientBinding>() {
             viewModel.diagnoseDiscrepancy(it.archLength, it.toothData)
         }
         return Diagnosis(
-            "Diskrepansi Ruang",
+            "Arch Length Discrepancy",
             listOf(
                 DiagnosisDetail("Rahang Bawah", mbDiscrepancy, mbExplanation),
                 DiagnosisDetail("Rahang Atas", maDiscrepancy, maExplanation)
@@ -196,6 +200,31 @@ class DetailPatientActivity : BaseActivity<ActivityDetailPatientBinding>() {
         else
             Pair(nullValue, "-")
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_help, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.miHelp -> {
+                MaterialDialog(this).show {
+                    title(text = "Cara Penggunaan Aplikasi")
+                    message(text = HELP_BODY_DETAIL) {
+                        html()
+                    }
+                    positiveButton(text = "Tutup")
+                }
+                return true
+            }
+            android.R.id.home -> {
+                onBackPressed()
+                return true
+            }
+        }
+
+        return false
+    }
 
     companion object {
         const val EXTRA_ID = "extra_id"

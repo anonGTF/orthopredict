@@ -46,9 +46,7 @@ class MainViewModel @Inject constructor(
     )
 
     fun diagnoseDiscrepancy(archLength: Double, toothData: Map<Jaw.TOOTH, Double>): Pair<String, String> {
-        val totalToothLength = toothData.entries.fold(0.0) { acc, entry ->
-            acc + entry.value
-        }
+        val totalToothLength = toothData.entries.fold(0.0) { acc, entry -> acc + entry.value }
         val space = archLength - totalToothLength
 
         val diagnosis =
@@ -146,18 +144,8 @@ class MainViewModel @Inject constructor(
     }
 
     fun diagnoseBolton(upperToothData: Map<Jaw.TOOTH, Double>, lowerToothData: Map<Jaw.TOOTH, Double>): Pair<String, String> {
-        val except = listOf(
-            Jaw.TOOTH.MOLAR_1,
-            Jaw.TOOTH.MOLAR_4
-        )
-        val sumUpper = upperToothData.entries.fold(0.0) { acc, entry ->
-            val addedVal = if (except.contains(entry.key)) 0.0 else entry.value
-            acc + addedVal
-        }
-        val sumLower = lowerToothData.entries.fold(0.0) { acc, entry ->
-            val addedVal = if (except.contains(entry.key)) 0.0 else entry.value
-            acc + addedVal
-        }
+        val sumUpper = upperToothData.entries.fold(0.0) { acc, entry -> acc + entry.value }
+        val sumLower = lowerToothData.entries.fold(0.0) { acc, entry -> acc + entry.value }
         val ratio = sumLower / sumUpper * 100
 
         val diagnosis =

@@ -6,5 +6,12 @@
         android:icon="@drawable/ic_account_circle"
         android:iconTint="@color/white"
         app:iconTint="@color/white"
-        android:title="logout" />
+        android:title="profile" />
+    <item
+        android:id="@+id/miHelp"
+        android:icon="@drawable/ic_help_outline"
+        android:title="help"
+        android:iconTint="@color/white"
+        app:iconTint="@color/white"
+        app:showAsAction="always" />
 </menu>

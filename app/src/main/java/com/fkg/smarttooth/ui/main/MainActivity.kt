@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.vvalidator.util.onTextChanged
 import com.fkg.smarttooth.R
 import com.fkg.smarttooth.base.BaseActivity
@@ -13,6 +14,7 @@ import com.fkg.smarttooth.data.model.Patient
 import com.fkg.smarttooth.databinding.ActivityMainBinding
 import com.fkg.smarttooth.ui.auth.LoginActivity
 import com.fkg.smarttooth.ui.profile.ProfileActivity
+import com.fkg.smarttooth.utils.HELP_BODY_MAIN
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
@@ -93,6 +95,16 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 goToActivity(ProfileActivity::class.java)
                 return true
             }
+            R.id.miHelp -> {
+                MaterialDialog(this).show {
+                    title(text = "Cara Penggunaan Aplikasi")
+                    message(text = HELP_BODY_MAIN) {
+                        html()
+                    }
+                    positiveButton(text = "Tutup")
+                }
+                return true
+            }
         }
 
         return false
@@ -112,20 +124,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         onLoading = {
             binding.progressBar.visible()
         }
-    )
-
-    private fun setLogoutObserver() = setObserver<Unit?>(
-        onSuccess = {
-            binding.progressBar.gone()
-            showToast("Berhasil logout")
-            setup()
-            invalidateOptionsMenu()
-        },
-        onError = {
-            binding.progressBar.gone()
-            showToast(it.message.toString())
-        },
-        onLoading = { binding.progressBar.visible() }
     )
 
     private fun setupRecyclerView() {
