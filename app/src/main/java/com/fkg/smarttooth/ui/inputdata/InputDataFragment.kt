@@ -75,8 +75,8 @@ class InputDataFragment(
         }
         createDataTableRow("Panjang Lengkung rahang", jawData?.archLength.orZero())
         createDataTableRow("Panjang Rahang", jawData?.length.orZero())
-        createDataTableRow("Lebar 1 (MPV)", jawData?.mpv.orZero())
-        createDataTableRow("Lebar 2 (MMV)", jawData?.mmv.orZero())
+        createDataTableRow("Lebar 1 (anterior)", jawData?.mpv.orZero())
+        createDataTableRow("Lebar 2 (posterior)", jawData?.mmv.orZero())
     }
 
     private fun setupEditMode() {
@@ -103,14 +103,14 @@ class InputDataFragment(
         ) { tempData[LENGTH] = it.safeParseDouble() }
 
         createInputTableRow(
-            "Lebar 1 (MPV)",
-            resources.getDrawable(R.drawable.mpv),
+            "Lebar 1 (anterior)",
+            resources.getDrawable(R.drawable.anterior),
             jawData?.mpv
         ) { tempData[MPV] = it.safeParseDouble() }
 
         createInputTableRow(
-            "Lebar 2 (MMV)",
-            resources.getDrawable(R.drawable.mmv),
+            "Lebar 2 (posterior)",
+            resources.getDrawable(R.drawable.posterior),
             jawData?.mmv
         ) { tempData[MMV] = it.safeParseDouble() }
 

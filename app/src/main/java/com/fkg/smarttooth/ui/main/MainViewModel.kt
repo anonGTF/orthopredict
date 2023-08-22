@@ -46,7 +46,14 @@ class MainViewModel @Inject constructor(
     )
 
     fun diagnoseDiscrepancy(archLength: Double, toothData: Map<Jaw.TOOTH, Double>): Pair<String, String> {
-        val totalToothLength = toothData.entries.fold(0.0) { acc, entry -> acc + entry.value }
+        val except = listOf(
+            Jaw.TOOTH.MOLAR_1,
+            Jaw.TOOTH.MOLAR_3
+        )
+        val totalToothLength = toothData.entries.fold(0.0) { acc, entry ->
+            val addedVal = if (except.contains(entry.key)) 0.0 else entry.value
+            acc + addedVal
+        }
         val space = archLength - totalToothLength
 
         val diagnosis =
@@ -88,16 +95,16 @@ class MainViewModel @Inject constructor(
 
         val diagnosisExplanation =
             when (diagnosis) {
-                "tapered" -> "Dikarenakan panjang lebih dari lebar 1 (mpv) dan lebar 2 (mmv), maka bentuk rahang adalah tapered"
-                "ovoid" -> "Dikarenakan panjang sama dengan lebar 1 (mpv) atau lebar 2 (mmv), maka bentuk rahang adalah ovoid"
-                "squared" -> "Dikarenakan panjang kurang dari lebar 1 (mpv) dan lebar 2 (mmv), maka bentuk rahang adalah squared"
+                "tapered" -> "Dikarenakan panjang lebih dari lebar 1 (anterior) dan lebar 2 (posterior), maka bentuk rahang adalah tapered"
+                "ovoid" -> "Dikarenakan panjang sama dengan lebar 1 (anterior) atau lebar 2 (posterior), maka bentuk rahang adalah ovoid"
+                "squared" -> "Dikarenakan panjang kurang dari lebar 1 (anterior) dan lebar 2 (posterior), maka bentuk rahang adalah squared"
                 else -> "Data tidak valid"
             }
 
         val explanation =
             "Panjang : $length \n" +
-            "Lebar 1 (mpv) : $mpv \n" +
-            "Lebar 2 (mmv) : $mmv \n\n" +
+            "Lebar 1 (anterior) : $mpv \n" +
+            "Lebar 2 (posterior) : $mmv \n\n" +
             diagnosisExplanation
 
         return Pair(diagnosis, explanation)
@@ -148,6 +155,24 @@ class MainViewModel @Inject constructor(
         val sumLower = lowerToothData.entries.fold(0.0) { acc, entry -> acc + entry.value }
         val ratio = sumLower / sumUpper * 100
 
+        val mesiodistal = listOf(
+            Jaw.TOOTH.CANINE_1,
+            Jaw.TOOTH.INCISOR_1,
+            Jaw.TOOTH.INCISOR_2,
+            Jaw.TOOTH.INCISOR_3,
+            Jaw.TOOTH.INCISOR_4,
+            Jaw.TOOTH.CANINE_2,
+        )
+        val sumAnteriorUpper = upperToothData.entries.fold(0.0) { acc, entry ->
+            val addedVal = if (mesiodistal.contains(entry.key)) entry.value else 0.0
+            acc + addedVal
+        }
+        val sumAnteriorLower = lowerToothData.entries.fold(0.0) { acc, entry ->
+            val addedVal = if (mesiodistal.contains(entry.key)) entry.value else 0.0
+            acc + addedVal
+        }
+        val anteriorRatio = sumAnteriorLower / sumAnteriorUpper * 100
+
         val diagnosis =
             if (ratio > 91.3) "ukuran gigi-gigi rahang bawah terlalu besar"
             else "ukuran gigi-gigi rahang atas terlalu besar"
@@ -156,11 +181,22 @@ class MainViewModel @Inject constructor(
             if (ratio > 91.3) "Dikarenakan rasio lebih dari 91.3, maka ukuran gigi-gigi rahang bawah terlalu besar"
             else "Dikarenakan rasio kurang dari 91.3, maka ukuran gigi-gigi rahang atas terlalu besar"
 
+        val anteriorDiagnosis =
+            if (anteriorRatio > 77.2) "ukuran gigi-gigi rahang bawah terlalu besar"
+            else "ukuran gigi-gigi rahang atas terlalu besar"
+
+        val anteriorDiagnosisExplanation =
+            if (anteriorRatio > 77.2) "Dikarenakan rasio lebih dari 91.3, maka ukuran gigi-gigi rahang bawah terlalu besar"
+            else "Dikarenakan rasio kurang dari 91.3, maka ukuran gigi-gigi rahang atas terlalu besar"
+
         val explanation =
             "Total panjang mandibula : $sumLower \n" +
             "Total panjang maxilla : $sumUpper \n" +
             "rasio : ${ratio.twoDecimalPlaces()} \n\n" +
-            diagnosisExplanation
+            diagnosisExplanation +
+            "rasio anterior : ${anteriorRatioq.twoDecimalPlaces()} \n\n" +
+            anteriorDiagnosisExplanation
+
 
         return Pair(diagnosis, explanation)
     }
