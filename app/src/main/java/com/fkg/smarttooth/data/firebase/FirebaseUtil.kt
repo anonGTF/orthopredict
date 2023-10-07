@@ -214,7 +214,7 @@ object FirebaseUtil {
         FirebaseCrashlytics.getInstance().log(customMessage)
         FirebaseCrashlytics.getInstance().setCustomKey(customKey, customValue)
         FirebaseCrashlytics.getInstance().recordException(e)
-        null
+        throw e
     }
 
 }

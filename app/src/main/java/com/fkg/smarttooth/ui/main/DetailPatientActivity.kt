@@ -180,15 +180,21 @@ class DetailPatientActivity : BaseActivity<ActivityDetailPatientBinding>() {
     }
 
     private fun getBoltonDiagnosis(mandible: Jaw?, maxilla: Jaw?): Diagnosis {
-        val (bolton, explanation) = if (mandible != null && maxilla != null)
-            viewModel.diagnoseBolton(maxilla.toothData, mandible.toothData)
+        val (allBolton, allExplanation) = if (mandible != null && maxilla != null)
+            viewModel.diagnoseOverallBolton(maxilla.toothData, mandible.toothData)
+        else
+            Pair("Data rahang atas dan rahang bawah harus diisi", "-")
+
+        val (anteriorBolton, anteriorExplanation) = if (mandible != null && maxilla != null)
+            viewModel.diagnoseAnteriorBolton(maxilla.toothData, mandible.toothData)
         else
             Pair("Data rahang atas dan rahang bawah harus diisi", "-")
 
         return Diagnosis(
             "Analisis Bolton",
             listOf(
-                DiagnosisDetail("", bolton, explanation)
+                DiagnosisDetail("Overall Ratio", allBolton, allExplanation),
+                DiagnosisDetail("Anterior Ratio", anteriorBolton, anteriorExplanation)
             ),
             R.drawable.ic_bolton
         )

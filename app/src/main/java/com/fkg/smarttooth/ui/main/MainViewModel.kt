@@ -75,9 +75,9 @@ class MainViewModel @Inject constructor(
             }
 
         val explanation =
-            "Total panjang gigi : $totalToothLength \n" +
-            "Panjang lengkung rahang : $archLength \n" +
-            "Panjang lengkung rahang - total panjang gigi : $space \n\n" +
+            "Total panjang gigi : ${totalToothLength.twoDecimalPlaces()} \n" +
+            "Panjang lengkung rahang : ${archLength.twoDecimalPlaces()} \n" +
+            "Panjang lengkung rahang - total panjang gigi : ${space.twoDecimalPlaces()} \n\n" +
             diagnosisExplanation
 
         return Pair("$diagnosis ($level)", explanation)
@@ -102,9 +102,9 @@ class MainViewModel @Inject constructor(
             }
 
         val explanation =
-            "Panjang : $length \n" +
-            "Lebar 1 (anterior) : $mpv \n" +
-            "Lebar 2 (posterior) : $mmv \n\n" +
+            "Panjang : ${length.twoDecimalPlaces()} \n" +
+            "Lebar 1 (anterior) : ${mpv.twoDecimalPlaces()} \n" +
+            "Lebar 2 (posterior) : ${mmv.twoDecimalPlaces()} \n\n" +
             diagnosisExplanation
 
         return Pair(diagnosis, explanation)
@@ -138,11 +138,11 @@ class MainViewModel @Inject constructor(
             }
 
         val explanation =
-            "Total panjang insisivus : $sumOfIncisor \n" +
+            "Total panjang insisivus : ${sumOfIncisor.twoDecimalPlaces()} \n" +
             "Calculated premolar value (cpv) : ${cpv.twoDecimalPlaces()} \n" +
             "Calculated molar value (cmv) : ${cmv.twoDecimalPlaces()} \n" +
-            "Measured premolar value (mpv) : $mpv \n" +
-            "Measured molar value (mmv) : $mmv \n" +
+            "Measured premolar value (mpv) : ${mpv.twoDecimalPlaces()} \n" +
+            "Measured molar value (mmv) : ${mmv.twoDecimalPlaces()} \n" +
             "mpv - cpv : ${premolar.twoDecimalPlaces()} \n" +
             "mmv - cmv : ${molar.twoDecimalPlaces()} \n\n" +
             diagnosisExplanation
@@ -150,28 +150,10 @@ class MainViewModel @Inject constructor(
         return Pair(diagnosis, explanation)
     }
 
-    fun diagnoseBolton(upperToothData: Map<Jaw.TOOTH, Double>, lowerToothData: Map<Jaw.TOOTH, Double>): Pair<String, String> {
+    fun diagnoseOverallBolton(upperToothData: Map<Jaw.TOOTH, Double>, lowerToothData: Map<Jaw.TOOTH, Double>): Pair<String, String> {
         val sumUpper = upperToothData.entries.fold(0.0) { acc, entry -> acc + entry.value }
         val sumLower = lowerToothData.entries.fold(0.0) { acc, entry -> acc + entry.value }
         val ratio = sumLower / sumUpper * 100
-
-        val mesiodistal = listOf(
-            Jaw.TOOTH.CANINE_1,
-            Jaw.TOOTH.INCISOR_1,
-            Jaw.TOOTH.INCISOR_2,
-            Jaw.TOOTH.INCISOR_3,
-            Jaw.TOOTH.INCISOR_4,
-            Jaw.TOOTH.CANINE_2,
-        )
-        val sumAnteriorUpper = upperToothData.entries.fold(0.0) { acc, entry ->
-            val addedVal = if (mesiodistal.contains(entry.key)) entry.value else 0.0
-            acc + addedVal
-        }
-        val sumAnteriorLower = lowerToothData.entries.fold(0.0) { acc, entry ->
-            val addedVal = if (mesiodistal.contains(entry.key)) entry.value else 0.0
-            acc + addedVal
-        }
-        val anteriorRatio = sumAnteriorLower / sumAnteriorUpper * 100
 
         val diagnosis =
             if (ratio > 91.3) "ukuran gigi-gigi rahang bawah terlalu besar"
@@ -181,22 +163,47 @@ class MainViewModel @Inject constructor(
             if (ratio > 91.3) "Dikarenakan rasio lebih dari 91.3, maka ukuran gigi-gigi rahang bawah terlalu besar"
             else "Dikarenakan rasio kurang dari 91.3, maka ukuran gigi-gigi rahang atas terlalu besar"
 
-        val anteriorDiagnosis =
-            if (anteriorRatio > 77.2) "ukuran gigi-gigi rahang bawah terlalu besar"
+        val explanation =
+            "Total panjang mandibula : ${sumLower.twoDecimalPlaces()} \n" +
+                    "Total panjang maxilla : ${sumUpper.twoDecimalPlaces()} \n" +
+                    "rasio : ${ratio.twoDecimalPlaces()} \n\n" +
+                    diagnosisExplanation
+
+        return Pair(diagnosis, explanation)
+    }
+
+    fun diagnoseAnteriorBolton(upperToothData: Map<Jaw.TOOTH, Double>, lowerToothData: Map<Jaw.TOOTH, Double>): Pair<String, String> {
+        val mesiodistal = listOf(
+            Jaw.TOOTH.CANINE_1,
+            Jaw.TOOTH.INCISOR_1,
+            Jaw.TOOTH.INCISOR_2,
+            Jaw.TOOTH.INCISOR_3,
+            Jaw.TOOTH.INCISOR_4,
+            Jaw.TOOTH.CANINE_2,
+        )
+        val sumUpper = upperToothData.entries.fold(0.0) { acc, entry ->
+            val addedVal = if (mesiodistal.contains(entry.key)) entry.value else 0.0
+            acc + addedVal
+        }
+        val sumLower = lowerToothData.entries.fold(0.0) { acc, entry ->
+            val addedVal = if (mesiodistal.contains(entry.key)) entry.value else 0.0
+            acc + addedVal
+        }
+        val ratio = sumLower / sumUpper * 100
+
+        val diagnosis =
+            if (ratio > 77.2) "ukuran gigi-gigi rahang bawah terlalu besar"
             else "ukuran gigi-gigi rahang atas terlalu besar"
 
-        val anteriorDiagnosisExplanation =
-            if (anteriorRatio > 77.2) "Dikarenakan rasio lebih dari 91.3, maka ukuran gigi-gigi rahang bawah terlalu besar"
-            else "Dikarenakan rasio kurang dari 91.3, maka ukuran gigi-gigi rahang atas terlalu besar"
+        val diagnosisExplanation =
+            if (ratio > 77.2) "Dikarenakan rasio anterior lebih dari 77.2, maka ukuran gigi-gigi rahang bawah terlalu besar"
+            else "Dikarenakan rasio anterior kurang dari 77.2, maka ukuran gigi-gigi rahang atas terlalu besar"
 
         val explanation =
-            "Total panjang mandibula : $sumLower \n" +
-            "Total panjang maxilla : $sumUpper \n" +
-            "rasio : ${ratio.twoDecimalPlaces()} \n\n" +
-            diagnosisExplanation +
-            "rasio anterior : ${anteriorRatioq.twoDecimalPlaces()} \n\n" +
-            anteriorDiagnosisExplanation
-
+            "Total panjang 6 gigi mandibula : ${sumLower.twoDecimalPlaces()} \n" +
+                    "Total panjang 6 gigi maxilla : ${sumUpper.twoDecimalPlaces()} \n" +
+                    "rasio anterior : ${ratio.twoDecimalPlaces()} \n\n" +
+                    diagnosisExplanation
 
         return Pair(diagnosis, explanation)
     }
